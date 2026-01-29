@@ -56,9 +56,7 @@ static bool postToNodeRed(int rssi=-1) {
   uint32_t ref_avg = 100;
   uint32_t act_avg = 98;
   uint32_t serial_number = 12345678;
-  //{"measurement":"env_chamber",
-  // "tags":{"measurement_type":"picarro"},
-  // "fields":{"nc1":0,"NH4":2.6231714285714287,"N20":0.33442380952380946,"CO2":469.31328571428577,"CH4":2.240438095238096,"H20":0.2723047619047619,"nc2":0,"nc3":0,"time":1769677128683,"motor_speed":0,"ch4setpoint":0}}
+  
   String json = "{";
   json += "\"measurement\":\"inir\",";
   json += "\"tags\":{\"measurement_type\":\"inir\",\"inir_serial\":" + String(serial_number) + "},";
@@ -88,7 +86,7 @@ static bool postToNodeRed(int rssi=-1) {
 }
 
 // ===================== EDUROAM CONNECT =====================
-static bool connectEduroam() {
+static bool connectEnterprise() {
   Serial.println("WiFiEnterprise: Starting connection to WPA2-Enterprise network");
   Serial.print("SSID: ");
   Serial.println(ssid);
@@ -111,6 +109,7 @@ static bool connectEduroam() {
   
   // Enable WPA2-Enterprise
   esp_wifi_sta_wpa2_ent_enable();
+  //uncomment the following line to set CA certificate for server validation
   //esp_wifi_sta_wpa2_ent_set_ca_cert(CA_PEM, sizeof(CA_PEM)); // Use NULL to skip server certificate validation (not recommended for production)
   
   Serial.println("WiFiEnterprise: Attempting to connect...");
@@ -118,7 +117,8 @@ static bool connectEduroam() {
   // Begin connection
   WiFi.begin(ssid);
 
-  Serial.print("Connecting to eduroam");
+  Serial.print("Connecting to: ");
+  Serial.println(ssid);
   unsigned long start = millis();
   while (!WiFi.isConnected() && millis() - start < 30000) {
     blink(0, 0, 255); // blue blink = connecting
@@ -146,7 +146,7 @@ void setup() {
   rgb.begin();
   led(0,0,0);
 
-  if (connectEduroam()) {
+  if (connectEnterprise()) {
     syncTime(); // helps HTTPS TLS validation (Let’s Encrypt)
   }
 }
