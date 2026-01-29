@@ -5,3 +5,8 @@
 .vscode/ipch
 secrets.h
 secrets.hpp
+*.env
+secrets.*
+**/certs/**
+**/*.pem
+**/*.key
